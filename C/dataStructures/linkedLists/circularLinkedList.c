@@ -158,6 +158,29 @@ list *insertAfter(list *list, int data, int insertData)
 
 list *deleteNode(list *list, int data)
 {
+    if(list->head->data == data)
+    {
+        node *deleteNode = list->head;
+
+        list->head = deleteNode->next;
+
+        list->tail->next = list->head;
+        list->head->prev = list->tail;
+
+        free(deleteNode);
+
+        return list;
+    }
+    else if(list->head == list->tail)
+    {
+        free(list->head);
+
+        list->head = NULL;
+        list->tail = NULL;
+
+        return list;
+    }
+
     node *traversal = list->head;
 
     while(traversal->next->data != data && traversal != list->tail)
@@ -173,26 +196,95 @@ list *deleteNode(list *list, int data)
         free(deleteNode);
     }
     else
-    {
         printf("Desired data not found!\n");
-    }
 
     return list;
 }
 
+node *search(list *list, int data)
+{
+    node *traversal = list->head;
+
+    while(traversal->data != data && traversal != list->tail)
+        traversal = traversal->next;
+
+    if(traversal->data == data)
+        return traversal;
+    else
+        printf("Desired data not found!\n");
+    
+    return NULL;
+}
+
+void updateNode(list *list, int data, int newData)
+{
+    node *traversal = list->head;
+
+    while(traversal->data != data && traversal != list->tail)
+        traversal = traversal->next;
+
+    if(traversal->data == data)
+        traversal->data = newData;
+    else
+        printf("Desired data not found!\n");
+        
+}
+
+void sortList(list *list)
+{
+    node *traversal, *sweep;
+    int temp;
+
+    traversal = list->head;
+
+    do
+    {
+        sweep = traversal;
+
+        do
+        {
+            if(sweep->data <= traversal->data)
+            {
+                temp = sweep->data;
+                sweep->data = traversal->data;
+                traversal->data = temp;
+            }
+
+            sweep = sweep->next;
+
+        } while(sweep != list->head);
+
+        traversal = traversal->next;
+
+    } while(traversal != list->head);
+}
+
+list *deleteList(list *list)
+{
+    while(list->head != list->tail)
+        list = deleteNode(list, list->head->data);
+
+    free(list->head);
+
+    list->head = NULL;
+    list->tail = NULL;
+
+    return list;
+}
 
 int main(void)
 {
     list *list = createList();
 
-    for(int i = 10; i >= 0; i--)
-        list = insertFront(list, i);
+    for(int i = 0; i <= 10; i++)
+    {
+        list = insertFront(list, i * 10);
+        list = insertAfter(list, i * 10, i + 5);
+    }
+
+    sortList(list);
+
+    list = deleteList(list);
 
     printListForwards(list);
-
-    list = deleteNode(list, 5);
-    printListForwards(list);
-
-
-
 }
