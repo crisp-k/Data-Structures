@@ -156,6 +156,30 @@ list *insertAfter(list *list, int data, int insertData)
     return list;
 }
 
+list *deleteNode(list *list, int data)
+{
+    node *traversal = list->head;
+
+    while(traversal->next->data != data && traversal != list->tail)
+        traversal = traversal->next;
+
+    if(traversal->next->data == data)
+    {
+        node *deleteNode = traversal->next;
+
+        traversal->next = deleteNode->next;
+        deleteNode->next->prev = traversal;
+
+        free(deleteNode);
+    }
+    else
+    {
+        printf("Desired data not found!\n");
+    }
+
+    return list;
+}
+
 
 int main(void)
 {
@@ -165,5 +189,10 @@ int main(void)
         list = insertFront(list, i);
 
     printListForwards(list);
-    
+
+    list = deleteNode(list, 5);
+    printListForwards(list);
+
+
+
 }
